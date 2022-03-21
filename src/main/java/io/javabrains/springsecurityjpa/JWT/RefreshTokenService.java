@@ -25,7 +25,7 @@ public class RefreshTokenService {
     public RefreshToken createRefreshToken(Integer userId) {
         RefreshToken refreshToken = new RefreshToken();
 
-        refreshToken.setUser(myUserDetailsService.getdeatils(userId));
+        refreshToken.setUser(myUserDetailsService.getDetails(userId));
         refreshToken.setExpiryDate(Instant.now().plus(30, ChronoUnit.DAYS));
         refreshToken.setToken(UUID.randomUUID().toString());
 
@@ -47,7 +47,7 @@ public class RefreshTokenService {
         return token;
     }
 
-    public void Delete(Integer id)
+    public void delete(Integer id)
     {
             refreshTokenRepository.deleteById(id);
 
