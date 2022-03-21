@@ -11,11 +11,10 @@ import java.util.Optional;
 public class ProductService {
 
 
-    @Autowired(required = true)
-
+    @Autowired
     ProductRepository productRepository;
 
-    public Product Create(Product product)
+    public Product create(Product product)
     {
         return productRepository.save(product);
     }
