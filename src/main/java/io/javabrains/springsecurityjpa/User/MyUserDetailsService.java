@@ -137,9 +137,13 @@ public class MyUserDetailsService implements UserDetailsService {
         Set<Cart> carts1=new HashSet<>();
         for(Cart cart:carts)
         {
-            if(!cart.getStatus().equals("APPROVED") || !cart.getStatus().equals("PENDING"))
+            if(cart.getStatus().equals("APPROVED") || cart.getStatus().equals("PENDING"))
             {
 
+
+            }
+            else
+            {
                 carts1.add(cart);
             }
 

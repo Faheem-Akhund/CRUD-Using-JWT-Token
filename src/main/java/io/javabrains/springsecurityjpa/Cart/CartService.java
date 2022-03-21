@@ -31,7 +31,7 @@ public class CartService {
 
 
         List<Product> products=new ArrayList<>();
-        User user1=userDetailsService.getdeatils(userName);
+        User user1=userDetailsService.getDetails(userName);
 
         for(ProductCartBean productCartBean: productCartBeans )
         {

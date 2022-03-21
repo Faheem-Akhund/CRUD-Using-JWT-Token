@@ -5,18 +5,15 @@ import io.javabrains.springsecurityjpa.Cart.Cart;
 import io.javabrains.springsecurityjpa.Cart.UserCartDetails;
 import io.javabrains.springsecurityjpa.JWT.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Date;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,7 +51,7 @@ public class UserController {
         final UserDetails user =service.loadUserByUsername(authenticationRequest.getUsername());
 
 
-        RefreshToken refreshToken=refreshTokenService.createRefreshToken(service.getdeatils(user.getUsername()).getId());
+        RefreshToken refreshToken=refreshTokenService.createRefreshToken(service.getDetails(user.getUsername()).getId());
 
         final String jwt = jwtTokenUtil.generateToken(user);
 
@@ -115,7 +112,6 @@ public class UserController {
 
     }
 
-
     @PostMapping("/signoff")
     public StatusBean signoff(@RequestHeader ("Authorization") String token,@RequestHeader ("RefreshToken") String refreshtoken){
 
@@ -130,7 +126,7 @@ public class UserController {
                {
                    Optional<RefreshToken> refreshToken=refreshTokenService.findByToken(refreshtoken);
                    if(refreshToken.isPresent())
-                   {   refreshTokenService.Delete(refreshToken.get().getId());
+                   {   refreshTokenService.delete(refreshToken.get().getId());
                        GlobalToken globalToken=new GlobalToken();
                        globalToken.setToken(token);
                        LocalDateTime now = LocalDateTime.now().plusMinutes(16);
@@ -150,8 +146,6 @@ public class UserController {
                }
            }
 
-
-
     @GetMapping("/blacklisted")
     public Object blacklisted()
     {
@@ -159,9 +153,6 @@ public class UserController {
         return GlobalCache.token;
 
     }
-
-
-
 
 
     @PostMapping("/create")
@@ -253,22 +244,22 @@ public class UserController {
     }
 
     @GetMapping("/cartdiscarded")
-    public StatusBean cartDiscaded(Principal principal) {
+    public StatusBean cartDiscarded(Principal principal) {
 
         if(principal.getName().isEmpty())
         {
             return new StatusBean(0,"Please Login in to Continue",null);
 
         }
-        Set<Cart> dicarded=service.dicarded(principal.getName());
+        Set<Cart> discarded=service.discarded(principal.getName());
 
-        if(dicarded.isEmpty())
+        if(discarded.isEmpty())
         {
-            return new StatusBean(1,"success","No dicarded items found");
+            return new StatusBean(1,"success","No discarded items found");
         }
 
 
-        return new StatusBean(1,"success",dicarded);
+        return new StatusBean(1,"success",discarded);
 
     }
 
@@ -277,7 +268,9 @@ public class UserController {
 
         try
         {
-           if(service.checkUserExists(id))
+           Boolean b=service.checkUserExists(id);
+
+            if(Boolean.TRUE.equals(b))
            {
                UserCartDetails user= service.userDetailsWithCart(id);
 
@@ -306,6 +299,9 @@ public class UserController {
 
 
     }
+
+
+
 
 
 }
