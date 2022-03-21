@@ -40,8 +40,17 @@ public class MyUserDetailsService implements UserDetailsService {
 
     public User getdeatils(String name)
     {
-        User user=userRepository.findByUserName(name).get();
-       return user;
+        Optional<User> user=userRepository.findByUserName(name);
+        if(user.isPresent())
+        {
+            User user1=user.get();
+            return user1;
+        }
+      else
+        {
+            return null;
+        }
+
 
     }
 

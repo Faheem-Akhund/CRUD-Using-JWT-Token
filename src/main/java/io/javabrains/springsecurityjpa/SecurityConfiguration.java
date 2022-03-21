@@ -47,6 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         catch (Exception e)
         {
 
+
         }
     }
 
