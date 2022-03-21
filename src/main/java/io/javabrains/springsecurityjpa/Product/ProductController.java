@@ -21,7 +21,7 @@ public class ProductController {
 
         try
         {
-            return new StatusBean(1,"success",productService.Create(product));
+            return new StatusBean(1,"success",productService.create(product));
         }
 
         catch (Exception e)
