@@ -38,7 +38,7 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
 
-    public User getdeatils(String name)
+    public User getDetails(String name)
     {
         Optional<User> user=userRepository.findByUserName(name);
         if(user.isPresent())
@@ -54,7 +54,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     }
 
-    public User getdeatils(Integer id)
+    public User getDetails(Integer id)
     {
         User user=userRepository.findById(id).get();
         return user;
@@ -76,8 +76,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
                 return true;
 
-
-        }
+             }
         else
         {
             return false;
@@ -87,7 +86,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     public UserCartDetails userDetailsWithCart (Integer id)
     {
-        User user=getdeatils(id);
+        User user=getDetails(id);
         UserCartDetails userCartDetails=new UserCartDetails();
         userCartDetails.setId(user.getId());
         userCartDetails.setUserName(user.getUserName());
@@ -100,7 +99,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     public Set<Cart> userCart(String name)
     {
-        Set<Cart> carts=getdeatils(name).getCart();
+        Set<Cart> carts=getDetails(name).getCart();
         Set<Cart> carts1=new HashSet<>();
         for(Cart cart:carts)
         {
@@ -117,11 +116,11 @@ public class MyUserDetailsService implements UserDetailsService {
 
     public Set<Cart> approved(String name)
     {
-        Set<Cart> carts=getdeatils(name).getCart();
+        Set<Cart> carts=getDetails(name).getCart();
         Set<Cart> carts1=new HashSet<>();
         for(Cart cart:carts)
         {
-            if(cart.getStatus()=="APPROVED" || cart.getStatus().equals("APPROVED"))
+            if(cart.getStatus().equals("APPROVED"))
             {
                 carts1.add(cart);
 
@@ -132,19 +131,15 @@ public class MyUserDetailsService implements UserDetailsService {
         return carts1;
     }
 
-    public Set<Cart> dicarded(String name)
+    public Set<Cart> discarded(String name)
     {
-        Set<Cart> carts=getdeatils(name).getCart();
+        Set<Cart> carts=getDetails(name).getCart();
         Set<Cart> carts1=new HashSet<>();
         for(Cart cart:carts)
         {
-            if(cart.getStatus().equals("APPROVED") || cart.getStatus().equals("PENDING"))
+            if(!cart.getStatus().equals("APPROVED") || !cart.getStatus().equals("PENDING"))
             {
 
-
-            }
-            else
-            {
                 carts1.add(cart);
             }
 
@@ -152,4 +147,6 @@ public class MyUserDetailsService implements UserDetailsService {
 
         return carts1;
     }
+
+
 }
