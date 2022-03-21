@@ -9,5 +9,5 @@ import lombok.Setter;
 public class ProductCartBean {
 
     private Integer id;
-//    private Integer quantity;
+
 }

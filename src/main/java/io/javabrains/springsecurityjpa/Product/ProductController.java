@@ -19,7 +19,17 @@ public class ProductController {
     @PostMapping("/product")
     public StatusBean createProduct(@RequestBody Product product) {
 
-        return new StatusBean(1,"success",productService.Create(product));
+        try
+        {
+            return new StatusBean(1,"success",productService.Create(product));
+        }
+
+        catch (Exception e)
+        {
+            return new StatusBean(0,"failed to create product",e.getMessage());
+        }
+
+
 
     }
 
