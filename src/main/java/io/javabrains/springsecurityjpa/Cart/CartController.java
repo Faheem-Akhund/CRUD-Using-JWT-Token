@@ -3,8 +3,8 @@ package io.javabrains.springsecurityjpa.Cart;
 
 import io.javabrains.springsecurityjpa.Beans.ApproveBean;
 import io.javabrains.springsecurityjpa.Beans.ProductCartBean;
+import io.javabrains.springsecurityjpa.Product.ProductDTO;
 import io.javabrains.springsecurityjpa.Beans.StatusBean;
-import io.javabrains.springsecurityjpa.Product.Product;
 import io.javabrains.springsecurityjpa.User.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,8 +28,7 @@ public class CartController {
 
         try
         {
-
-            List<Product> product=cartService.addProducts(list,principal.getName());
+            List<ProductDTO> product=cartService.addProducts(list,principal.getName());
 
             if(product.isEmpty())
             {
@@ -82,6 +81,98 @@ public class CartController {
 
 
     }
+
+    @GetMapping("cart/approved")
+    public StatusBean approved(Principal principal) {
+
+        try
+        {
+            List<Cart> approved=cartService.getByStatus(principal.getName(),"APPROVED");
+            if(approved==null)
+            {
+                return new StatusBean(0,"failed","No pending items found");
+            }
+            return new StatusBean(1,"success",approved);
+        }
+
+        catch (Exception e)
+        {
+            return new StatusBean(1,"failed",e.getMessage());
+        }
+
+        }
+
+
+    @GetMapping("cart/pending")
+    public StatusBean pending(Principal principal) {
+
+        try
+        {
+            List<Cart> approved=cartService.getByStatus(principal.getName(),"PENDING");
+            if(approved==null)
+            {
+                return new StatusBean(0,"failed","No pending items found");
+            }
+            return new StatusBean(1,"success",approved);
+        }
+
+        catch (Exception e)
+        {
+            return new StatusBean(1,"failed",e.getMessage());
+        }
+
+    }
+
+    @GetMapping("cart/discarded")
+    public StatusBean discarded(Principal principal) {
+
+        try
+        {
+            List<Cart> approved=cartService.getByStatus(principal.getName(),"DISCARDED");
+            if(approved==null)
+            {
+                return new StatusBean(0,"failed","No pending items found");
+            }
+            return new StatusBean(1,"success",approved);
+        }
+
+        catch (Exception e)
+        {
+            return new StatusBean(1,"failed",e.getMessage());
+        }
+
+    }
+
+
+    @PostMapping("/user/{id}/products")
+    public StatusBean cartProductStatusUpdate(@PathVariable Integer id,@RequestBody List<ApproveBean> approveBean) {
+
+        if(!myUserDetailsService.checkUserExists(id))
+        {
+            return new StatusBean(0,"user doesnt exists",null);
+
+        }
+        else
+        {
+
+
+           cartService.Approved(approveBean,id);
+
+
+            return new StatusBean(1,"success",myUserDetailsService.userDetailsWithCart(id));
+
+        }
+
+
+
+
+    }
+
+
+
+
+
+
 
 
 
