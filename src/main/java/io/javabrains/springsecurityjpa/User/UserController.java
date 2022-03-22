@@ -156,7 +156,7 @@ public class UserController {
 
 
     @PostMapping("/create")
-    public StatusBean createCourse(@RequestBody UserCreateBean user) {
+    public StatusBean createUser(@RequestBody UserCreateBean user) {
 
 
         try {
