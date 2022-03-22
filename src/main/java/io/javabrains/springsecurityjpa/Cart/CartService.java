@@ -32,6 +32,7 @@ public class CartService {
 
         List<Product> products=new ArrayList<>();
         User user1=userDetailsService.getDetails(userName);
+        Set<Cart> carts=new HashSet<>();
 
         for(ProductCartBean productCartBean: productCartBeans )
         {
@@ -43,11 +44,15 @@ public class CartService {
                 cart.setUser(user1);
                 cart.setProduct(product);
                 products.add(product);
-                repository.save(cart);
+//                repository.save(cart);
+//                carts.add(cart);
             }
 
 
+
+
         }
+        repository.saveAll(carts);
 
         if(products.isEmpty())
         {
