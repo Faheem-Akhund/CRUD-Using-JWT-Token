@@ -3,10 +3,12 @@ package io.javabrains.springsecurityjpa.Cart;
 
 import io.javabrains.springsecurityjpa.Beans.ApproveBean;
 import io.javabrains.springsecurityjpa.Beans.ProductCartBean;
+import io.javabrains.springsecurityjpa.Product.ProductDTO;
 import io.javabrains.springsecurityjpa.Product.Product;
 import io.javabrains.springsecurityjpa.Product.ProductService;
 import io.javabrains.springsecurityjpa.User.MyUserDetailsService;
 import io.javabrains.springsecurityjpa.User.User;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,9 @@ import java.util.*;
 public class CartService {
 
     @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
     private CartRepository repository;
 
     @Autowired
@@ -27,7 +32,7 @@ public class CartService {
     private MyUserDetailsService userDetailsService;
 
 
-    public List<Product> addProducts(List<ProductCartBean> productCartBeans,String userName) {
+    public List<ProductDTO> addProducts(List<ProductCartBean> productCartBeans,String userName) {
 
 
         List<Product> products=new ArrayList<>();
@@ -36,7 +41,8 @@ public class CartService {
 
         for(ProductCartBean productCartBean: productCartBeans )
         {
-            Product product=productService.getProductbyId(productCartBean.getId());
+            ProductDTO productDTO=productService.getProductById(productCartBean.getId());
+            Product product=modelMapper.map(productDTO,Product.class);
 
             if(product!=null)
             {
@@ -44,13 +50,8 @@ public class CartService {
                 cart.setUser(user1);
                 cart.setProduct(product);
                 products.add(product);
-//                repository.save(cart);
-//                carts.add(cart);
+                carts.add(cart);
             }
-
-
-
-
         }
         repository.saveAll(carts);
 
@@ -60,7 +61,7 @@ public class CartService {
 
         }
 
-        return products;
+        return  Arrays.asList(modelMapper.map(products,ProductDTO[].class));
 
 
     }
@@ -95,6 +96,59 @@ public class CartService {
 
         }
         else
+        {
+            return null;
+        }
+
+    }
+
+
+    public void Approved(List<ApproveBean> approveBean,Integer id) {
+
+        User user=new User();
+        user.setId(id);
+        Optional<List<Cart>> carts=repository.findByUserAndStatus(user,"PENDING");
+        List<Cart> carts1=carts.get();
+
+        for(Cart cart: carts1 )
+        {
+            for(ApproveBean approveBean1:approveBean)
+            {
+                if(cart.getId()==approveBean1.getId())
+                {
+                    cart.setStatus(approveBean1.getStatus());
+                    break;
+                }
+
+            }
+
+        }
+
+
+
+        repository.saveAll(carts1);
+
+
+    }
+
+    public List<Cart> getByStatus(String name,String status) {
+        User user=userDetailsService.getDetails(name);
+        try {
+            if(status.equals("DISCARDED"))
+            {
+                Optional<List<Cart>> carts=repository.findByUserAndStatusNotAndStatusNot(user,"APPROVED","PENDING");
+
+                return carts.get();
+
+
+            }
+            Optional<List<Cart>> carts=repository.findByUserAndStatus(user,status);
+
+            return carts.get();
+
+            }
+
+        catch (Exception e)
         {
             return null;
         }
