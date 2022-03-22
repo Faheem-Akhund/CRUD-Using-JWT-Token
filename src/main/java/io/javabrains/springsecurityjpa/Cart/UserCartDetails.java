@@ -4,6 +4,7 @@ import io.javabrains.springsecurityjpa.Cart.Cart;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -13,7 +14,7 @@ public class UserCartDetails {
 
     private int id;
     private String userName;
-    private Set<Cart> cart;
+    private List<Cart> cart;
 
 
 }

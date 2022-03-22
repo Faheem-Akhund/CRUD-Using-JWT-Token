@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class UserCreateBean {
+public class UserCreateDTO {
 
     private String userName;
 

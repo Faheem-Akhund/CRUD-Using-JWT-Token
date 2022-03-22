@@ -10,12 +10,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 import java.util.Optional;
-import java.util.Set;
+
 
 
 @RestController
@@ -113,7 +112,7 @@ public class UserController {
     }
 
     @PostMapping("/signoff")
-    public StatusBean signoff(@RequestHeader ("Authorization") String token,@RequestHeader ("RefreshToken") String refreshtoken){
+    public StatusBean signOff(@RequestHeader ("Authorization") String token,@RequestHeader ("RefreshToken") String rToken){
 
 
            token=token.substring(7);
@@ -124,7 +123,7 @@ public class UserController {
 
                else
                {
-                   Optional<RefreshToken> refreshToken=refreshTokenService.findByToken(refreshtoken);
+                   Optional<RefreshToken> refreshToken=refreshTokenService.findByToken(rToken);
                    if(refreshToken.isPresent())
                    {   refreshTokenService.delete(refreshToken.get().getId());
                        GlobalToken globalToken=new GlobalToken();
@@ -146,17 +145,9 @@ public class UserController {
                }
            }
 
-    @GetMapping("/blacklisted")
-    public Object blacklisted()
-    {
-
-        return GlobalCache.token;
-
-    }
-
 
     @PostMapping("/create")
-    public StatusBean createUser(@RequestBody UserCreateBean user) {
+    public StatusBean createUser(@RequestBody UserCreateDTO user) {
 
 
         try {
@@ -174,12 +165,8 @@ public class UserController {
                 return new StatusBean(0,"provide a Role to the for user",null);
             }
 
-            User user1=new User();
-            user1.setUserName(user.getUserName());
-            user1.setActive(true);
-            user1.setRoles(user.getRoles());
-            user1.setPassword(user.getPassword());
-            service.create(user1);
+
+            service.create(user);
 
             return new StatusBean(1,"User Created",user.getUserName());
 
@@ -193,75 +180,6 @@ public class UserController {
 
     }
 
-
-    @GetMapping("/")
-    public StatusBean hello(Principal principal) {
-
-        if(principal.getName().isEmpty())
-        {
-            return new StatusBean(0,"Please Login in to Continue",null);
-
-        }
-
-            return new StatusBean(0,"Welcome "+principal.getName(),null);
-
-    }
-
-    @GetMapping("/cartproducts")
-    public StatusBean cart(Principal principal) {
-
-        if(principal.getName().isEmpty())
-        {
-            return new StatusBean(0,"Please Login in to Continue",null);
-
-        }
-        Set<Cart> pending=service.userCart(principal.getName());
-        if(pending.isEmpty())
-        {
-            return new StatusBean(1,"success","Cart is Empty");
-        }
-
-        return new StatusBean(1,"success",pending);
-
-    }
-
-    @GetMapping("/cartapproved")
-    public StatusBean cartApproved(Principal principal) {
-
-        if(principal.getName().isEmpty())
-        {
-            return new StatusBean(0,"Please Login in to Continue",null);
-
-        }
-
-        Set<Cart> approved=service.approved(principal.getName());
-            if(approved.isEmpty())
-            {
-                return new StatusBean(1,"success","No permitted items found");
-            }
-        return new StatusBean(1,"success",approved);
-
-    }
-
-    @GetMapping("/cartdiscarded")
-    public StatusBean cartDiscarded(Principal principal) {
-
-        if(principal.getName().isEmpty())
-        {
-            return new StatusBean(0,"Please Login in to Continue",null);
-
-        }
-        Set<Cart> discarded=service.discarded(principal.getName());
-
-        if(discarded.isEmpty())
-        {
-            return new StatusBean(1,"success","No discarded items found");
-        }
-
-
-        return new StatusBean(1,"success",discarded);
-
-    }
 
     @GetMapping("/user/{id}")
     public StatusBean cart(@PathVariable Integer id) {
@@ -299,9 +217,6 @@ public class UserController {
 
 
     }
-
-
-
 
 
 }

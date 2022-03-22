@@ -1,7 +1,9 @@
 package io.javabrains.springsecurityjpa.User;
 
+import io.javabrains.springsecurityjpa.Cart.CartService;
 import io.javabrains.springsecurityjpa.Cart.UserCartDetails;
 import io.javabrains.springsecurityjpa.Cart.Cart;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +19,13 @@ import java.util.Set;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    CartService cartService;
 
 
 
@@ -32,8 +40,10 @@ public class MyUserDetailsService implements UserDetailsService {
         return user.map(MyUserDetails::new).get();
     }
 
-    public void create(User user)
+    public void create(UserCreateDTO userCreateDTO)
     {
+        User user=modelMapper.map(userCreateDTO,User.class);
+        user.setActive(true);
         userRepository.save(user);
     }
 
@@ -91,66 +101,16 @@ public class MyUserDetailsService implements UserDetailsService {
         userCartDetails.setId(user.getId());
         userCartDetails.setUserName(user.getUserName());
 
-        userCartDetails.setCart(userCart(user.getUserName()));
+        userCartDetails.setCart(cartService.getByStatus(user.getUserName(),"PENDING"));
 
         return userCartDetails;
     }
 
 
-    public Set<Cart> userCart(String name)
-    {
-        Set<Cart> carts=getDetails(name).getCart();
-        Set<Cart> carts1=new HashSet<>();
-        for(Cart cart:carts)
-        {
-            if(cart.getStatus()=="PENDING" || cart.getStatus().equals("PENDING"))
-            {
-                carts1.add(cart);
-
-            }
-
-        }
-
-        return carts1;
-    }
-
-    public Set<Cart> approved(String name)
-    {
-        Set<Cart> carts=getDetails(name).getCart();
-        Set<Cart> carts1=new HashSet<>();
-        for(Cart cart:carts)
-        {
-            if(cart.getStatus().equals("APPROVED"))
-            {
-                carts1.add(cart);
-
-            }
-
-        }
-
-        return carts1;
-    }
-
-    public Set<Cart> discarded(String name)
-    {
-        Set<Cart> carts=getDetails(name).getCart();
-        Set<Cart> carts1=new HashSet<>();
-        for(Cart cart:carts)
-        {
-            if(cart.getStatus().equals("APPROVED") || cart.getStatus().equals("PENDING"))
-            {
 
 
-            }
-            else
-            {
-                carts1.add(cart);
-            }
 
-        }
 
-        return carts1;
-    }
 
 
 }

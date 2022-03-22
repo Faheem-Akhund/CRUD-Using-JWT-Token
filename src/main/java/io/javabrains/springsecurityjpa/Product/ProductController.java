@@ -1,7 +1,6 @@
 package io.javabrains.springsecurityjpa.Product;
 
 import io.javabrains.springsecurityjpa.Beans.StatusBean;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +16,12 @@ public class ProductController {
     ProductService productService;
 
     @PostMapping("/product")
-    public StatusBean createProduct(@RequestBody Product product) {
+    public StatusBean createProduct(@RequestBody ProductDTO productDTO) {
 
         try
         {
-            return new StatusBean(1,"success",productService.create(product));
+            productDTO.setId(null);
+            return new StatusBean(1,"success",productService.create(productDTO));
         }
 
         catch (Exception e)
@@ -38,8 +38,8 @@ public class ProductController {
 
         try {
 
-            List<Product> product=productService.allProducts();
-            if(product.isEmpty())
+            List<ProductDTO> productDTOS=productService.allProducts();
+            if(productDTOS.isEmpty())
             {
                 return new StatusBean(0,"Failed no products found",null);
 
@@ -47,7 +47,7 @@ public class ProductController {
 
             else
             {
-                return new StatusBean(1,"Success",product);
+                return new StatusBean(1,"Success",productDTOS);
             }
 
 
