@@ -1,11 +1,11 @@
 package io.javabrains.springsecurityjpa.Product;
 
 import io.javabrains.springsecurityjpa.Beans.StatusBean;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -60,6 +60,23 @@ public class ProductController {
 
 
     }
+
+    @GetMapping("/productss/")
+    public StatusBean getProductsWithPagination(Pageable pageable) {
+
+        List<Product> products = productService.findProductsWithPagination(pageable);
+
+        return new StatusBean(1,"success pagination",products);
+    }
+
+    @GetMapping("/Findproducts/{category}")
+    public StatusBean findAllProducts(@PathVariable String category) {
+
+        List<ProductDTO> products = productService.findAllProducts(category);
+
+        return new StatusBean(1,"success pagination",products);
+    }
+
 
 
 }
