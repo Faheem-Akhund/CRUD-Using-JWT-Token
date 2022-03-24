@@ -131,20 +131,22 @@ public class CartService {
 
     }
 
-    public List<Cart> getByStatus(String name,String status) {
+    public List<CartDTO> getByStatus(String name,String status) {
         User user=userDetailsService.getDetails(name);
         try {
             if(status.equals("DISCARDED"))
             {
                 Optional<List<Cart>> carts=repository.findByUserAndStatusNotAndStatusNot(user,"APPROVED","PENDING");
 
-                return carts.get();
+
+                return  Arrays.asList(modelMapper.map(carts.get(),CartDTO[].class));
+
 
 
             }
             Optional<List<Cart>> carts=repository.findByUserAndStatus(user,status);
 
-            return carts.get();
+            return  Arrays.asList(modelMapper.map(carts.get(),CartDTO[].class));
 
             }
 
