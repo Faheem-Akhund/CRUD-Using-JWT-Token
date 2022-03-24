@@ -3,6 +3,7 @@ package io.javabrains.springsecurityjpa.Cart;
 
 import io.javabrains.springsecurityjpa.Beans.ApproveBean;
 import io.javabrains.springsecurityjpa.Beans.ProductCartBean;
+import io.javabrains.springsecurityjpa.Beans.TotalCart;
 import io.javabrains.springsecurityjpa.Product.ProductDTO;
 import io.javabrains.springsecurityjpa.Beans.StatusBean;
 import io.javabrains.springsecurityjpa.User.MyUserDetailsService;
@@ -87,12 +88,21 @@ public class CartController {
 
         try
         {
-            List<Cart> approved=cartService.getByStatus(principal.getName(),"APPROVED");
+            List<CartDTO> approved=cartService.getByStatus(principal.getName(),"APPROVED");
             if(approved==null)
             {
                 return new StatusBean(0,"failed","No pending items found");
             }
-            return new StatusBean(1,"success",approved);
+
+            Integer sum=0;
+            for(CartDTO cart:approved)
+            {
+                sum+=cart.getProduct().getPrice();
+            }
+
+
+
+            return new StatusBean(1,"success",new TotalCart(sum,approved));
         }
 
         catch (Exception e)
@@ -108,7 +118,7 @@ public class CartController {
 
         try
         {
-            List<Cart> approved=cartService.getByStatus(principal.getName(),"PENDING");
+            List<CartDTO> approved=cartService.getByStatus(principal.getName(),"PENDING");
             if(approved==null)
             {
                 return new StatusBean(0,"failed","No pending items found");
@@ -128,7 +138,7 @@ public class CartController {
 
         try
         {
-            List<Cart> approved=cartService.getByStatus(principal.getName(),"DISCARDED");
+            List<CartDTO> approved=cartService.getByStatus(principal.getName(),"DISCARDED");
             if(approved==null)
             {
                 return new StatusBean(0,"failed","No pending items found");
