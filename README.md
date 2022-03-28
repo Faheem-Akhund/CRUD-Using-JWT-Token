@@ -2,6 +2,30 @@
 
 I have used lombok for getter setter etc see what lombok is if you dont know
 
+Clone the project 
+### it has packages 
+#### Prdouct
+
+     its controller 
+     its pojo /model
+     its Repo 
+     its service
+     
+#### User
+	  its controller 
+	  its MyUser Detail which implements UserDetails //for Jwt 
+	  its pojo /model
+	  its Repo 
+	  its service which implements UserDetailsService //for jwt
+     
+#### JWT
+	 it has JwtRequestFilter // for jwt 
+	 it has Jwt utill Service which contains methods // for jwt
+	 it has Refresh token pojo/model
+	 refresh token repo 
+	 refresh token service 
+	  userToken class as bean !
+     
 
 
 ## Installation
